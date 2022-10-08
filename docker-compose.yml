@@ -1,0 +1,35 @@
+version: "3.7"
+
+volumes:
+  db:
+
+services:
+  postgres-db:
+    image: postgres:13-alpine
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: maveric_hub
+      POSTGRES_project: r_project
+      POSTGRES_PASSWORD: r_project@123
+
+  project-service:
+    container_name: project-service
+    build:
+      context: ../project-service
+      dockerfile: Dockerfile
+    image: project-service:latest
+    restart: always
+    ports:
+      - 4045:4045
+    depends_on:
+      - postgres-db
+    links:
+      - postgres-db:database
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/maveric_hub
+      - SPRING_DATASOURCE_projectNAME=r_project
+      - SPRING_DATASOURCE_PASSWORD=r_project@123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update

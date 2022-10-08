@@ -1,0 +1,8 @@
+server:
+  port: 4045
+spring:
+  application:
+    name: subscription-service
+logging:
+  level:
+    com.maveric: info
